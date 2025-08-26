@@ -2,9 +2,9 @@ package co.com.pragma.config;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UseCasesConfigTest {
@@ -30,15 +30,25 @@ public class UseCasesConfigTest {
     @Import(UseCasesConfig.class)
     static class TestConfig {
 
-        @Bean
-        public MyUseCase myUseCase() {
-            return new MyUseCase();
-        }
+        // @Bean
+        // public UserRepository userRepository() {
+        //     return UserRepository();
+        // }
     }
 
-    static class MyUseCase {
-        public String execute() {
-            return "MyUseCase Test";
-        }
-    }
+    // @Configuration
+    // public class R2dbcTxTestConfig {
+
+    //   @Bean
+    //   public R2dbcTransactionManager r2dbcTransactionManager(io.r2dbc.spi.ConnectionFactory cf) {
+    //     return new R2dbcTransactionManager(cf);
+    //   }
+    // }
+
+
+    // static class MyUseCase {
+    //     public String execute() {
+    //         return "MyUseCase Test";
+    //     }
+    // }
 }
