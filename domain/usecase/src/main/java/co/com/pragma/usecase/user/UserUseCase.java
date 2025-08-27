@@ -23,7 +23,7 @@ public class UserUseCase {
     Mono<Boolean> documentNumberExists = userGateway.existUserByDocumentNumber(user.getDocumentNumber());
     return Mono.zip(emailExists, documentNumberExists)
       .flatMap(tuple -> {
-        if (tuple.getT1() && tuple.getT2()) {
+        if (tuple.getT1() || tuple.getT2()) {
           List<String> errors = new ArrayList<>();
           errors.add(emailAlreadyExists);
           errors.add(documentNumberAlreadyExists);
