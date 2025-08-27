@@ -1,6 +1,5 @@
 package co.com.pragma.r2dbc.helper;
 
-import co.com.pragma.model.user.User;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Example;
 import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
@@ -65,6 +64,4 @@ public abstract class ReactiveAdapterOperations<E, D, I, R extends ReactiveCrudR
         return repository.findAll()
                 .map(this::toEntity);
     }
-
-    public abstract Mono<User> findByEmail(String email);
 }

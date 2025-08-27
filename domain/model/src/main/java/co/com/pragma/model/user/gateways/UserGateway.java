@@ -6,7 +6,7 @@ import reactor.core.publisher.Mono;
 
 public interface UserGateway {
   Mono<User> save(User user);
-  Mono<User> findById(Long id);
-  Mono<User> findByEmail(String email);
+  Mono<Boolean> existUserByDocumentNumber(String documentNumber);
+  Mono<Boolean> existUserByEmail(String email);
   Flux<User> findAll();
 }

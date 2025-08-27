@@ -17,7 +17,7 @@ public class UserMapper {
                 .phoneNumber(dto.getPhoneNumber())
                 .email(dto.getEmail())
                 .documentNumber(dto.getDocumentNumber())
-                .roleId(dto.getRoleId())
+                .role(dto.getRole())
                 .baseSalary(dto.getBaseSalary())
                 .build();
     }
@@ -32,7 +32,7 @@ public class UserMapper {
                 .phoneNumber(entity.getPhoneNumber())
                 .email(entity.getEmail())
                 .documentNumber(entity.getDocumentNumber())
-                .roleId(entity.getRoleId())
+                .role(entity.getRole())
                 .baseSalary(entity.getBaseSalary())
                 .build();
     }

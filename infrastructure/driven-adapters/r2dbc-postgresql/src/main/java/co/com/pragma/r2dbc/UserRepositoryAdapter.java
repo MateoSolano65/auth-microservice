@@ -9,25 +9,18 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class UserRepositoryAdapter extends ReactiveAdapterOperations<
-    User,
-    UserData,
-    Long,
-        UserRepository
-> implements UserGateway {
+public class UserRepositoryAdapter extends ReactiveAdapterOperations< User, UserData, Long, UserRepository > implements UserGateway {
     public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper) {
         super(repository, mapper, d -> mapper.map(d, User.class));
     }
 
     @Override
-    public Mono<User> findById(Long id) {
-        return repository.findById(id)
-                .map(this::toEntity);
+    public Mono<Boolean> existUserByDocumentNumber(String documentNumber) {
+        return repository.existsByDocumentNumber(documentNumber);
     }
 
     @Override
-    public Mono<User> findByEmail(String email) {
-        return repository.findByEmail(email)
-                .map(this::toEntity);
+    public Mono<Boolean> existUserByEmail(String email) {
+        return repository.existsByEmail(email);
     }
 }

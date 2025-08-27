@@ -1,5 +1,6 @@
 package co.com.pragma.r2dbc.entities;
 
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
@@ -7,6 +8,8 @@ import org.springframework.data.relational.core.mapping.Table;
 import java.math.BigInteger;
 import java.time.LocalDate;
 
+@Getter
+@Setter
 @Table("users")
 public class UserData {
   @Id
@@ -17,7 +20,7 @@ public class UserData {
   @Column("last_name")
   private String lastName;
   @Column("date_of_birth")
-  private LocalDate dateOfBirth;
+  private String dateOfBirth;
   @Column("address")
   private String address;
   @Column("phone_number")
@@ -26,9 +29,9 @@ public class UserData {
   private String email;
   @Column("document_number")
   private String documentNumber;
-  @Column("role_id")
-  private String roleId;
+  @Column("role")
+  private String role;
   @Column("base_salary")
-  private BigInteger baseSalary;
+  private String baseSalary;
 }
 
