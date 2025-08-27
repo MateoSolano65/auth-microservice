@@ -29,7 +29,7 @@ public class UserUseCase {
           errors.add(documentNumberAlreadyExists);
           if (!errors.isEmpty()) return Mono.error(new ResourceConflictException(String.join(", ", errors)));
         }
-        return userGateway.save(user);
+        return userGateway.saveUser(user);
       });
   }
 

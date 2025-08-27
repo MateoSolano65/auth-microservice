@@ -21,12 +21,12 @@ import static co.com.pragma.api.regex.regex.*;
 public class UserDto {
     private Long id;
     
-    @Schema(description = "Nombre del usuario", example = "Juan")
+    @Schema(description = "Nombre del usuario", example = "Juan Carlos")
     @NotBlank(message = "El nombre es obligatorio")
     @Pattern(regexp = NAME_REGEX, message = "El nombre debe contener al menos 2 caracteres y solo puede contener letras y espacios")
     private String name;
     
-    @Schema(description = "Apellido del usuario", example = "Pérez")
+    @Schema(description = "Apellido del usuario", example = "Pérez Gómez")
     @NotBlank(message = "El apellido es obligatorio")
     @Pattern(regexp = LAST_NAME_REGEX, message = "El apellido debe contener al menos 2 caracteres y solo puede contener letras y espacios")
     private String lastName;
@@ -41,7 +41,7 @@ public class UserDto {
     @Pattern(regexp = ADDRESS_REGEX, message = "La dirección debe contener al menos 2 caracteres y solo puede contener letras, números y caracteres especiales comunes")
     private String address;
     
-    @Schema(description = "Número de teléfono", example = "+57 3001234567")
+    @Schema(description = "Número de teléfono", example = "+573001234567")
     @NotBlank(message = "El número de teléfono es obligatorio")
     @Pattern(regexp = PHONE_NUMBER_REGEX, message = "El número de teléfono debe tener entre 7 y 15 dígitos")
     private String phoneNumber;
