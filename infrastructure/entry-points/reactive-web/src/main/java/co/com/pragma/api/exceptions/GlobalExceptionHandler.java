@@ -1,6 +1,8 @@
 package co.com.pragma.api.exceptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import co.com.pragma.model.exception.BusinessRuleViolationException;
 import co.com.pragma.model.exception.ResourceConflictException;
@@ -24,39 +26,49 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     
   private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
   private static final HashMap<Class<?>, HttpStatus> httpStatusCodes = new HashMap<>();
+  private static final List<Class<?>> businessExceptions = new ArrayList<>();
 
     public GlobalExceptionHandler(ErrorAttributes errorAttributes, ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
         super(errorAttributes, new WebProperties.Resources(), applicationContext);
         super.setMessageWriters(serverCodecConfigurer.getWriters());
-        super.setMessageWriters(serverCodecConfigurer.getWriters());
+        super.setMessageReaders(serverCodecConfigurer.getReaders());
+        
         httpStatusCodes.put(BusinessRuleViolationException.class, HttpStatus.BAD_REQUEST);
         httpStatusCodes.put(ResourceConflictException.class, HttpStatus.CONFLICT);
+        httpStatusCodes.put(WebExchangeBindException.class, HttpStatus.BAD_REQUEST);
+        
+        businessExceptions.add(BusinessRuleViolationException.class);
+        businessExceptions.add(ResourceConflictException.class);
+        businessExceptions.add(WebExchangeBindException.class);
     }
 
     private Mono<ServerResponse> errorResponse(ServerRequest request) {
         Throwable throwable = this.getError(request);
-        HttpStatus responseCode = httpStatusCode((Exception) throwable);
         String message = throwable.getMessage();
+        HttpStatus responseCode;
+        
+        if (throwable instanceof ResponseStatusException responseStatusException) {
+            responseCode = HttpStatus.valueOf(responseStatusException.getStatusCode().value());
+        } else if (httpStatusCodes.containsKey(throwable.getClass())) {
+            responseCode = httpStatusCodes.get(throwable.getClass());
+        } else if (Exceptions.isMultiple(throwable)) {
+            responseCode = HttpStatus.BAD_REQUEST;
+        } else {
+            responseCode = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+        
         ErrorResponse error = new ErrorResponse(responseCode.value(), message);
-
-        if (!(throwable instanceof BusinessRuleViolationException) && !Exceptions.isMultiple(throwable)
-                && !(throwable instanceof WebExchangeBindException)
-                && !(throwable instanceof ResourceConflictException)) {
-            responseCode = throwable instanceof ResponseStatusException responseStatusException ?
-                    HttpStatus.valueOf(responseStatusException.getStatusCode().value()) :
-                    HttpStatus.INTERNAL_SERVER_ERROR;
-            error = new ErrorResponse();
-
+        
+        boolean isBusinessException = businessExceptions.stream()
+            .anyMatch(exClass -> exClass.isInstance(throwable)) || Exceptions.isMultiple(throwable);
+            
+        if (!isBusinessException) {
             logger.error(message, throwable);
         }
+        
         return ServerResponse.status(responseCode)
-                .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(error);
-    }
-
-    private HttpStatus httpStatusCode(Exception throwable) {
-        HttpStatus statusCode = httpStatusCodes.get(throwable.getClass());
-        return statusCode == null ? HttpStatus.BAD_REQUEST : statusCode;
+            .contentType(MediaType.APPLICATION_JSON)
+            .bodyValue(error);
     }
 
     @Override

@@ -1,5 +1,10 @@
 package co.com.pragma.api.exceptions;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class ErrorResponse {
 
   protected static final String ERROR_DESCRIPTION = "Error unexpected";
