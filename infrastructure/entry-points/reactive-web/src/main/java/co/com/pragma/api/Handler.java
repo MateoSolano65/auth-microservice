@@ -3,7 +3,6 @@ package co.com.pragma.api;
 import co.com.pragma.api.dto.ErrorResponse;
 import co.com.pragma.api.dto.UserDto;
 import co.com.pragma.api.mapper.UserMapper;
-import co.com.pragma.model.user.User;
 import co.com.pragma.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -59,6 +60,12 @@ public class Handler {
                         .bodyValue(userDto))
                 .switchIfEmpty(createErrorResponse("User not found", "No user found with email: " + email, HttpStatus.NOT_FOUND))
                 .onErrorResume(this::handleError);
+    }
+
+    public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
+      return ServerResponse.ok()
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(userUseCase.getAllUsers().map(userMapper::toDto), UserDto.class);
     }
     
     private Mono<ServerResponse> handleError(Throwable error) {

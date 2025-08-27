@@ -18,12 +18,6 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations<
     public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper) {
         super(repository, mapper, d -> mapper.map(d, User.class));
     }
-    
-    @Override
-    public Mono<User> saveUser(User entity) {
-        return repository.save(toData(entity))
-                .map(this::toEntity);
-    }
 
     @Override
     public Mono<User> findById(Long id) {
