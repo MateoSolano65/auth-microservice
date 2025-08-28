@@ -71,9 +71,9 @@ class UserRouterRestTest {
     void testCreateUserSuccessful() {
 
         when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(userDto));
-        when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
+        when(userMapper.toUserDomain(any(UserDto.class))).thenReturn(user);
         when(userUseCase.createUser(any(User.class))).thenReturn(Mono.just(user));
-        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+        when(userMapper.toUserDto(any(User.class))).thenReturn(userDto);
 
 
         webTestClient.post()
@@ -90,7 +90,7 @@ class UserRouterRestTest {
     void testGetAllUsersSuccessful() {
 
         when(userUseCase.getAllUsers()).thenReturn(Flux.fromIterable(userList));
-        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+        when(userMapper.toUserDto(any(User.class))).thenReturn(userDto);
 
 
         webTestClient.get()
@@ -127,7 +127,7 @@ class UserRouterRestTest {
         duplicateUserDto.setDocumentNumber("123456");
         
         when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(duplicateUserDto));
-        when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
+        when(userMapper.toUserDomain(any(UserDto.class))).thenReturn(user);
         when(userUseCase.createUser(any(User.class)))
                 .thenReturn(Mono.error(new RuntimeException("User already exists")));
 

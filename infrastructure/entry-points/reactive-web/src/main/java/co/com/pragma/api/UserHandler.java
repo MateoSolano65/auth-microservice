@@ -45,9 +45,9 @@ public class UserHandler {
     public Mono<ServerResponse> createUserPost(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserDto.class)
                 .flatMap(validatorDTO::validate)
-                .map(userMapper::toEntity)
+                .map(userMapper::toUserDomain)
                 .flatMap(userUseCase::createUser)
-                .map(userMapper::toDto)
+                .map(userMapper::toUserDto)
                 .flatMap(userDto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(userDto));
     }
 
@@ -63,7 +63,7 @@ public class UserHandler {
     )
     public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
       return userUseCase.getAllUsers()
-        .map(userMapper::toDto)
+        .map(userMapper::toUserDto)
         .collectList()
         .flatMap(userDtos -> ServerResponse.ok()
           .contentType(MediaType.APPLICATION_JSON)

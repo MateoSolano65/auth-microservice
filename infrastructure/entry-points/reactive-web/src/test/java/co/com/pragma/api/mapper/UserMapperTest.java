@@ -11,13 +11,13 @@ class UserMapperTest {
     private final UserMapper userMapper = new UserMapper();
 
     @Test
-    void toDto_whenUserIsNull_shouldReturnNull() {
-        UserDto userDto = userMapper.toDto(null);
+    void toUserDto_whenUserIsNull_shouldReturnNull() {
+        UserDto userDto = userMapper.toUserDto(null);
         assertThat(userDto).isNull();
     }
 
     @Test
-    void toDto_whenUserExists_shouldReturnUserDto() {
+    void toDto_whenUserExists_shouldReturnUserUserDto() {
 
         User user = User.builder()
                 .id(1L)
@@ -31,7 +31,7 @@ class UserMapperTest {
                 .build();
                 
 
-        UserDto userDto = userMapper.toDto(user);
+        UserDto userDto = userMapper.toUserDto(user);
         
 
         assertThat(userDto.getId()).isEqualTo(user.getId());
@@ -44,7 +44,7 @@ class UserMapperTest {
     }
 
     @Test
-    void toEntity_whenUserDtoExists_shouldReturnUser() {
+    void toUserDomain_whenUserDtoExists_shouldReturnUser() {
 
         UserDto userDto = UserDto.builder()
                 .id(1L)
@@ -58,7 +58,7 @@ class UserMapperTest {
                 .build();
                 
 
-        User user = userMapper.toEntity(userDto);
+        User user = userMapper.toUserDomain(userDto);
         
 
         assertThat(user.getId()).isEqualTo(userDto.getId());
@@ -71,8 +71,8 @@ class UserMapperTest {
     }
 
     @Test
-    void toEntity_whenUserDtoIsNull_shouldReturnNull() {
-        User user = userMapper.toEntity(null);
+    void toUserDomain_whenUserDtoIsNull_shouldReturnNull() {
+        User user = userMapper.toUserDomain(null);
         assertThat(user).isNull();
     }
 }
