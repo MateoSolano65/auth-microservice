@@ -15,8 +15,8 @@ public class UserUseCase {
   private final UserGateway userGateway;
 
   // mensajes para correo y documento duplicados
-  public String emailAlreadyExists = "Email already exists";
-  public String documentNumberAlreadyExists = "Document number already exists";
+  public final String emailAlreadyExists = "Email already exists";
+  public final String documentNumberAlreadyExists = "Document number already exists";
 
   public Mono<User> createUser(User user) {
     Mono<Boolean> emailExists = userGateway.existUserByEmail(user.getEmail());

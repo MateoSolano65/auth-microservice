@@ -1,12 +1,26 @@
 package co.com.pragma.api;
 
-import org.assertj.core.api.Assertions;
+import co.com.pragma.api.dto.UserDto;
+import co.com.pragma.api.mapper.UserMapper;
+import co.com.pragma.api.validator.ValidatorDTO;
+import co.com.pragma.model.user.User;
+import co.com.pragma.usecase.user.UserUseCase;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class})
 @WebFluxTest
@@ -15,46 +29,129 @@ class RouterRestTest {
     @Autowired
     private WebTestClient webTestClient;
 
-    @Test
-    void testListenGETUseCase() {
-        webTestClient.get()
-                .uri("/api/usecase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
+    @MockBean
+    private UserUseCase userUseCase;
+
+    @MockBean
+    private UserMapper userMapper;
+
+    @MockBean
+    private ValidatorDTO validatorDTO;
+
+    private UserDto userDto;
+    private User user;
+    private List<UserDto> userDtoList;
+    private List<User> userList;
+
+    @BeforeEach
+    void setUp() {
+        userDto = new UserDto();
+        userDto.setId(1L);
+        userDto.setName("John");
+        userDto.setLastName("Doe");
+        userDto.setEmail("john.doe@example.com");
+        userDto.setDocumentNumber("123456789");
+
+        user = User.builder()
+                .id(1L)
+                .name("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .documentNumber("123456789")
+                .build();
+
+        userDtoList = new ArrayList<>();
+        userDtoList.add(userDto);
+
+        userList = new ArrayList<>();
+        userList.add(user);
     }
 
     @Test
-    void testListenGETOtherUseCase() {
-        webTestClient.get()
-                .uri("/api/otherusercase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
-    }
+    void testCreateUserSuccessful() {
+        // Arrange
+        when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(userDto));
+        when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
+        when(userUseCase.createUser(any(User.class))).thenReturn(Mono.just(user));
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
-    @Test
-    void testListenPOSTUseCase() {
+        // Act & Assert
         webTestClient.post()
-                .uri("/api/usecase/otherpath")
+                .uri("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(userDto)
+                .exchange()
+                .expectStatus().isCreated()
+                .expectBody(UserDto.class)
+                .isEqualTo(userDto);
+    }
+
+    @Test
+    void testGetAllUsersSuccessful() {
+        // Arrange
+        when(userUseCase.getAllUsers()).thenReturn(Flux.fromIterable(userList));
+        when(userMapper.toDto(any(User.class))).thenReturn(userDto);
+
+        // Act & Assert
+        webTestClient.get()
+                .uri("/api/users")
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue("")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
+                .expectBodyList(UserDto.class)
+                .hasSize(1)
+                .contains(userDto);
+    }
+    
+    @Test
+    void testCreateUserValidationError() {
+        // Arrange
+        UserDto invalidUserDto = new UserDto();
+        when(validatorDTO.validate(any(UserDto.class)))
+                .thenReturn(Mono.error(new IllegalArgumentException("Validation failed")));
+
+        // Act & Assert
+        webTestClient.post()
+                .uri("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(invalidUserDto)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+    
+    @Test
+    void testCreateUserBusinessError() {
+        // Arrange
+        UserDto duplicateUserDto = new UserDto();
+        duplicateUserDto.setEmail("existing@example.com");
+        duplicateUserDto.setDocumentNumber("123456");
+        
+        when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(duplicateUserDto));
+        when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
+        when(userUseCase.createUser(any(User.class)))
+                .thenReturn(Mono.error(new RuntimeException("User already exists")));
+
+        // Act & Assert
+        webTestClient.post()
+                .uri("/api/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(duplicateUserDto)
+                .exchange()
+                .expectStatus().is5xxServerError();
+    }
+    
+    @Test
+    void testGetAllUsersEmpty() {
+        // Arrange
+        when(userUseCase.getAllUsers()).thenReturn(Flux.empty());
+
+        // Act & Assert
+        webTestClient.get()
+                .uri("/api/users")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(UserDto.class)
+                .hasSize(0);
     }
 }

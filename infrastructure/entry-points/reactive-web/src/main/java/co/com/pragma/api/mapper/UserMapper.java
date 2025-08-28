@@ -8,6 +8,9 @@ import org.springframework.stereotype.Component;
 public class UserMapper {
     
     public User toEntity(UserDto dto) {
+        if (dto == null) {
+            return null;
+        }
         return User.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -23,6 +26,9 @@ public class UserMapper {
     }
     
     public UserDto toDto(User entity) {
+        if (entity == null) {
+            return null;
+        }
         return UserDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())

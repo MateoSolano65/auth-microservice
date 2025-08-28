@@ -1,11 +1,14 @@
 package co.com.pragma.config;
 
+import co.com.pragma.model.user.gateways.UserGateway;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class UseCasesConfigTest {
 
@@ -30,25 +33,10 @@ public class UseCasesConfigTest {
     @Import(UseCasesConfig.class)
     static class TestConfig {
 
-        // @Bean
-        // public UserRepository userRepository() {
-        //     return UserRepository();
-        // }
+         @Bean
+         public UserGateway userGateway() {
+             return mock(UserGateway.class);
+         }
     }
 
-    // @Configuration
-    // public class R2dbcTxTestConfig {
-
-    //   @Bean
-    //   public R2dbcTransactionManager r2dbcTransactionManager(io.r2dbc.spi.ConnectionFactory cf) {
-    //     return new R2dbcTransactionManager(cf);
-    //   }
-    // }
-
-
-    // static class MyUseCase {
-    //     public String execute() {
-    //         return "MyUseCase Test";
-    //     }
-    // }
 }
