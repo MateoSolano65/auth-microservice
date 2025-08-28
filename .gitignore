@@ -334,3 +334,4 @@ gradle-app.setting
 # -----
 *.hprof
 build-cache
+domain/model/build/tmp/compileJava/previous-compilation-data.bin

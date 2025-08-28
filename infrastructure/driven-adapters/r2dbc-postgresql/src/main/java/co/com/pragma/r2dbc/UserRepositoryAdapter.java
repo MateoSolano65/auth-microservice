@@ -6,34 +6,28 @@ import co.com.pragma.r2dbc.entities.UserData;
 import co.com.pragma.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class UserRepositoryAdapter extends ReactiveAdapterOperations<
-    User,
-    UserData,
-    Long,
-        UserRepository
-> implements UserGateway {
-    public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper) {
+public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserData, Long, UserRepository> implements UserGateway {
+
+    private final TransactionalOperator transactionalOperator;
+
+    public UserRepositoryAdapter(UserRepository repository, ObjectMapper mapper, TransactionalOperator transactionalOperator) {
         super(repository, mapper, d -> mapper.map(d, User.class));
-    }
-    
-    @Override
-    public Mono<User> saveUser(User entity) {
-        return repository.save(toData(entity))
-                .map(this::toEntity);
+        this.transactionalOperator = transactionalOperator;
     }
 
     @Override
-    public Mono<User> findById(Long id) {
-        return repository.findById(id)
-                .map(this::toEntity);
+    public Mono<User> saveUser(User user) {
+        return this.save(user)
+                .as(transactionalOperator::transactional);
     }
 
+
     @Override
-    public Mono<User> findByEmail(String email) {
-        return repository.findByEmail(email)
-                .map(this::toEntity);
+    public Mono<Boolean> existUserByEmailAndDocument(String email, String documentNumber) {
+        return repository.existsByEmailOrDocumentNumber(email, documentNumber);
     }
 }

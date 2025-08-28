@@ -19,11 +19,11 @@ public class User {
   private Long id;
   private String name;
   private String lastName;
-  private LocalDate dateOfBirth;
+  private String dateOfBirth;
   private String address;
   private String phoneNumber;
   private String email;
   private String documentNumber;
-  private String roleId;
-  private BigInteger baseSalary;
+  private String role;
+  private String baseSalary;
 }

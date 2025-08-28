@@ -2,22 +2,25 @@ package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.gateways.UserGateway;
+import co.com.pragma.model.exception.ResourceConflictException;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RequiredArgsConstructor
 public class UserUseCase {
-  private final UserGateway userGateway;
+    private final UserGateway userGateway;
 
-  public Mono<User> createUser(User user) {
-    return userGateway.saveUser(user);
-  }
+    public Mono<User> createUser(User user) {
 
-  public Mono<User> getUserById(Long id) {
-    return userGateway.findById(id);
-  }
+        return userGateway.existUserByEmailAndDocument(user.getEmail(), user.getDocumentNumber())
+                .flatMap(exists -> {
+                    if (Boolean.TRUE.equals(exists)) return Mono.error(new ResourceConflictException("User already exists"));
+                    return userGateway.saveUser(user);
+                });
+    }
 
-  public Mono<User> getUserByEmail(String email) {
-    return userGateway.findByEmail(email);
-  }
+    public Flux<User> getAllUsers() {
+        return userGateway.findAll();
+    }
 }

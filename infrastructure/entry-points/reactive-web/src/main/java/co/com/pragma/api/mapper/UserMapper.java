@@ -7,7 +7,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
     
-    public User toEntity(UserDto dto) {
+    public User toUserDomain(UserDto dto) {
+        if (dto == null) {
+            return null;
+        }
         return User.builder()
                 .id(dto.getId())
                 .name(dto.getName())
@@ -17,12 +20,15 @@ public class UserMapper {
                 .phoneNumber(dto.getPhoneNumber())
                 .email(dto.getEmail())
                 .documentNumber(dto.getDocumentNumber())
-                .roleId(dto.getRoleId())
+                .role(dto.getRole())
                 .baseSalary(dto.getBaseSalary())
                 .build();
     }
     
-    public UserDto toDto(User entity) {
+    public UserDto toUserDto(User entity) {
+        if (entity == null) {
+            return null;
+        }
         return UserDto.builder()
                 .id(entity.getId())
                 .name(entity.getName())
@@ -32,7 +38,7 @@ public class UserMapper {
                 .phoneNumber(entity.getPhoneNumber())
                 .email(entity.getEmail())
                 .documentNumber(entity.getDocumentNumber())
-                .roleId(entity.getRoleId())
+                .role(entity.getRole())
                 .baseSalary(entity.getBaseSalary())
                 .build();
     }
