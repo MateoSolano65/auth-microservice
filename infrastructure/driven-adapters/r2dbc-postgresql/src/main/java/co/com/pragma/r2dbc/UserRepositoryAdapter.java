@@ -10,7 +10,7 @@ import org.springframework.transaction.reactive.TransactionalOperator;
 import reactor.core.publisher.Mono;
 
 @Repository
-public class UserRepositoryAdapter extends ReactiveAdapterOperations< User, UserData, Long, UserRepository > implements UserGateway {
+public class UserRepositoryAdapter extends ReactiveAdapterOperations<User, UserData, Long, UserRepository> implements UserGateway {
 
     private final TransactionalOperator transactionalOperator;
 
@@ -22,16 +22,12 @@ public class UserRepositoryAdapter extends ReactiveAdapterOperations< User, User
     @Override
     public Mono<User> saveUser(User user) {
         return this.save(user)
-            .as(transactionalOperator::transactional);
+                .as(transactionalOperator::transactional);
     }
 
-    @Override
-    public Mono<Boolean> existUserByDocumentNumber(String documentNumber) {
-        return repository.existsByDocumentNumber(documentNumber);
-    }
 
     @Override
-    public Mono<Boolean> existUserByEmail(String email) {
-        return repository.existsByEmail(email);
+    public Mono<Boolean> existUserByEmailAndDocument(String email, String documentNumber) {
+        return repository.existsByEmailOrDocumentNumber(email, documentNumber);
     }
 }
