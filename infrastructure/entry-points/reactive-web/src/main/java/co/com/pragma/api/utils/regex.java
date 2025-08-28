@@ -1,4 +1,4 @@
-package co.com.pragma.api.regex;
+package co.com.pragma.api.utils;
 
 public class regex {
 
