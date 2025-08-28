@@ -11,7 +11,7 @@ import java.util.Map;
 public class ResponseFactory {
 
     private ResponseFactory() {
-        // Private constructor to prevent instantiation
+
     }
 
     public static <T> ResponseEntity<ResponseApiDto<T>> ok(T data) {

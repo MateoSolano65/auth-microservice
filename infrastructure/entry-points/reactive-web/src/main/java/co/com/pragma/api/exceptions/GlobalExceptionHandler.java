@@ -84,7 +84,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
             .status(status.value());
 
         if (throwable instanceof WebExchangeBindException validationEx) {
-            // Spring WebExchangeBindException validation error
+
             Map<String, Object> meta = new HashMap<>();
             List<Map<String, String>> violations = validationEx.getBindingResult()
                 .getFieldErrors()
@@ -107,15 +107,15 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                 .meta(meta)
                 .build();
         } else if (throwable instanceof ConstraintViolationException validationEx) {
-            // Jakarta ConstraintViolationException validation error
+
             Map<String, Object> meta = new HashMap<>();
             List<Map<String, String>> violations = validationEx.getConstraintViolations()
                 .stream()
                 .map(violation -> {
                     Map<String, String> violationMap = new HashMap<>();
-                    // Extract field name from path
+
                     String field = violation.getPropertyPath().toString();
-                    // If the path contains nodes, get the last node as the field name
+
                     if (field.contains(".")) {
                         field = field.substring(field.lastIndexOf('.') + 1);
                     }
@@ -135,7 +135,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                 .meta(meta)
                 .build();
         } else if (throwable instanceof ResourceConflictException) {
-            // Resource conflict
+
             return responseBuilder
                 .error(ErrorInfoDto.builder()
                     .code("RESOURCE_CONFLICT")
@@ -143,7 +143,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     .build())
                 .build();
         } else if (throwable instanceof BusinessRuleViolationException) {
-            // Business rule violation
+
             return responseBuilder
                 .error(ErrorInfoDto.builder()
                     .code("BUSINESS_RULE_VIOLATION")
@@ -151,7 +151,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     .build())
                 .build();
         } else {
-            // Generic error or unexpected error
+
             return responseBuilder
                 .error(ErrorInfoDto.builder()
                     .code("INTERNAL_ERROR")
