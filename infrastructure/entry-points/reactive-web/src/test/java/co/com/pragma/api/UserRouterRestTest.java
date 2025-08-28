@@ -22,9 +22,9 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class})
+@ContextConfiguration(classes = {UserRouterRest.class, UserHandler.class})
 @WebFluxTest
-class RouterRestTest {
+class UserRouterRestTest {
 
     @Autowired
     private WebTestClient webTestClient;

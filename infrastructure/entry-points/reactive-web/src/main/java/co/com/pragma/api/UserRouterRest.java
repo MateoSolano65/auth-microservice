@@ -1,8 +1,6 @@
 package co.com.pragma.api;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -22,13 +20,13 @@ import static org.springframework.web.reactive.function.server.RequestPredicates
 import static org.springframework.web.reactive.function.server.RouterFunctions.route;
 
 @Configuration
-public class RouterRest {
+public class UserRouterRest {
 
     @RouterOperations({
             @RouterOperation(
                     path = "/api/users",
                     method = RequestMethod.POST,
-                    beanClass = Handler.class,        // <—
+                    beanClass = UserHandler.class,        // <—
                     beanMethod = "createUserPost",        // <—
                     operation = @Operation(
                             operationId = "createUser",   // <—
@@ -49,7 +47,7 @@ public class RouterRest {
             @RouterOperation(
                     path = "/api/users",
                     method = RequestMethod.GET,
-                    beanClass = Handler.class,
+                    beanClass = UserHandler.class,
                     beanMethod = "getAllUsers",
                     operation = @Operation(
                             operationId = "getAllUsers",
@@ -60,8 +58,8 @@ public class RouterRest {
             )
     })
     @Bean
-    public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST("/api/users"), handler::createUserPost)
-                .andRoute(GET("/api/users"), handler::getAllUsers);
+    public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
+        return route(POST("/api/users"), userHandler::createUserPost)
+                .andRoute(GET("/api/users"), userHandler::getAllUsers);
     }
 }

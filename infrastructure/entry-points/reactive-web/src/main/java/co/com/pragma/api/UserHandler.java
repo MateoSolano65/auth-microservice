@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 
 @Component
 @RequiredArgsConstructor
-public class Handler {
+public class UserHandler {
     private final UserUseCase userUseCase;
     private final UserMapper userMapper;
     private final ValidatorDTO validatorDTO;
