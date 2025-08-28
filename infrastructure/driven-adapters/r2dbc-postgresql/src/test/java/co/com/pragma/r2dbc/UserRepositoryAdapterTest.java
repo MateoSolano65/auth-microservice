@@ -60,19 +60,19 @@ class UserRepositoryAdapterTest {
 
     @Test
     void shouldSaveUser() {
-        // Arrange
+
         when(mapper.map(testUser, UserData.class)).thenReturn(testUserData);
         when(repository.save(testUserData)).thenReturn(Mono.just(testUserData));
         when(mapper.map(testUserData, User.class)).thenReturn(testUser);
         
-        // Mock the transactional behavior
+
         when(transactionalOperator.transactional(any(Mono.class)))
             .thenAnswer(invocation -> invocation.getArgument(0));
         
-        // Act
+
         Mono<User> result = repositoryAdapter.saveUser(testUser);
         
-        // Assert
+
         StepVerifier.create(result)
                 .expectNext(testUser)
                 .verifyComplete();
@@ -80,14 +80,14 @@ class UserRepositoryAdapterTest {
     
     @Test
     void shouldCheckIfUserExistsByDocumentNumber() {
-        // Arrange
+
         String documentNumber = "123456789";
         when(repository.existsByDocumentNumber(documentNumber)).thenReturn(Mono.just(true));
         
-        // Act
+
         Mono<Boolean> result = repositoryAdapter.existUserByDocumentNumber(documentNumber);
         
-        // Assert
+
         StepVerifier.create(result)
                 .expectNext(true)
                 .verifyComplete();
@@ -95,14 +95,14 @@ class UserRepositoryAdapterTest {
     
     @Test
     void shouldCheckIfUserExistsByEmail() {
-        // Arrange
+
         String email = "john.doe@example.com";
         when(repository.existsByEmail(email)).thenReturn(Mono.just(false));
         
-        // Act
+
         Mono<Boolean> result = repositoryAdapter.existUserByEmail(email);
         
-        // Assert
+
         StepVerifier.create(result)
                 .expectNext(false)
                 .verifyComplete();
@@ -110,14 +110,14 @@ class UserRepositoryAdapterTest {
     
     @Test
     void shouldFindAllUsers() {
-        // Arrange
+
         when(repository.findAll()).thenReturn(Flux.just(testUserData));
         when(mapper.map(testUserData, User.class)).thenReturn(testUser);
         
-        // Act
+
         Flux<User> result = repositoryAdapter.findAll();
         
-        // Assert
+
         StepVerifier.create(result)
                 .expectNext(testUser)
                 .verifyComplete();
@@ -125,14 +125,14 @@ class UserRepositoryAdapterTest {
     
     @Test
     void shouldFindByIdUser() {
-        // Arrange
+
         when(repository.findById(1L)).thenReturn(Mono.just(testUserData));
         when(mapper.map(testUserData, User.class)).thenReturn(testUser);
         
-        // Act
+
         Mono<User> result = repositoryAdapter.findById(1L);
         
-        // Assert
+
         StepVerifier.create(result)
                 .expectNext(testUser)
                 .verifyComplete();
@@ -140,7 +140,7 @@ class UserRepositoryAdapterTest {
     
     @Test
     void shouldFindByExample() {
-        // Arrange
+
         User filterUser = User.builder().email("john.doe@example.com").build();
         UserData filterUserData = new UserData();
         filterUserData.setEmail("john.doe@example.com");
@@ -149,10 +149,10 @@ class UserRepositoryAdapterTest {
         when(repository.findAll(any(Example.class))).thenReturn(Flux.just(testUserData));
         when(mapper.map(testUserData, User.class)).thenReturn(testUser);
         
-        // Act
+
         Flux<User> result = repositoryAdapter.findByExample(filterUser);
         
-        // Assert
+
         StepVerifier.create(result)
                 .expectNext(testUser)
                 .verifyComplete();

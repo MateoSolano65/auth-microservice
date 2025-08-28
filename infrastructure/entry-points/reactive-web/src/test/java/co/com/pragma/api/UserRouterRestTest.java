@@ -69,13 +69,13 @@ class UserRouterRestTest {
 
     @Test
     void testCreateUserSuccessful() {
-        // Arrange
+
         when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(userDto));
         when(userMapper.toEntity(any(UserDto.class))).thenReturn(user);
         when(userUseCase.createUser(any(User.class))).thenReturn(Mono.just(user));
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
-        // Act & Assert
+
         webTestClient.post()
                 .uri("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -88,11 +88,11 @@ class UserRouterRestTest {
 
     @Test
     void testGetAllUsersSuccessful() {
-        // Arrange
+
         when(userUseCase.getAllUsers()).thenReturn(Flux.fromIterable(userList));
         when(userMapper.toDto(any(User.class))).thenReturn(userDto);
 
-        // Act & Assert
+
         webTestClient.get()
                 .uri("/api/users")
                 .accept(MediaType.APPLICATION_JSON)
@@ -105,12 +105,12 @@ class UserRouterRestTest {
     
     @Test
     void testCreateUserValidationError() {
-        // Arrange
+
         UserDto invalidUserDto = new UserDto();
         when(validatorDTO.validate(any(UserDto.class)))
                 .thenReturn(Mono.error(new IllegalArgumentException("Validation failed")));
 
-        // Act & Assert
+
         webTestClient.post()
                 .uri("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -121,7 +121,7 @@ class UserRouterRestTest {
     
     @Test
     void testCreateUserBusinessError() {
-        // Arrange
+
         UserDto duplicateUserDto = new UserDto();
         duplicateUserDto.setEmail("existing@example.com");
         duplicateUserDto.setDocumentNumber("123456");
@@ -131,7 +131,7 @@ class UserRouterRestTest {
         when(userUseCase.createUser(any(User.class)))
                 .thenReturn(Mono.error(new RuntimeException("User already exists")));
 
-        // Act & Assert
+
         webTestClient.post()
                 .uri("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -142,10 +142,10 @@ class UserRouterRestTest {
     
     @Test
     void testGetAllUsersEmpty() {
-        // Arrange
+
         when(userUseCase.getAllUsers()).thenReturn(Flux.empty());
 
-        // Act & Assert
+
         webTestClient.get()
                 .uri("/api/users")
                 .accept(MediaType.APPLICATION_JSON)

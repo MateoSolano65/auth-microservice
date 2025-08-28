@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class UserUseCase {
   private final UserGateway userGateway;
 
-  // mensajes para correo y documento duplicados
+
   public final String emailAlreadyExists = "Email already exists";
   public final String documentNumberAlreadyExists = "Document number already exists";
 

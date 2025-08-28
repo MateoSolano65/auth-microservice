@@ -18,7 +18,7 @@ class UserMapperTest {
 
     @Test
     void toDto_whenUserExists_shouldReturnUserDto() {
-        // Arrange
+
         User user = User.builder()
                 .id(1L)
                 .name("John")
@@ -30,10 +30,10 @@ class UserMapperTest {
                 .baseSalary("2000000")
                 .build();
                 
-        // Act
+
         UserDto userDto = userMapper.toDto(user);
         
-        // Assert
+
         assertThat(userDto.getId()).isEqualTo(user.getId());
         assertThat(userDto.getName()).isEqualTo(user.getName());
         assertThat(userDto.getLastName()).isEqualTo(user.getLastName());
@@ -45,7 +45,7 @@ class UserMapperTest {
 
     @Test
     void toEntity_whenUserDtoExists_shouldReturnUser() {
-        // Arrange
+
         UserDto userDto = UserDto.builder()
                 .id(1L)
                 .name("John")
@@ -57,10 +57,10 @@ class UserMapperTest {
                 .baseSalary("2000000")
                 .build();
                 
-        // Act
+
         User user = userMapper.toEntity(userDto);
         
-        // Assert
+
         assertThat(user.getId()).isEqualTo(userDto.getId());
         assertThat(user.getName()).isEqualTo(userDto.getName());
         assertThat(user.getLastName()).isEqualTo(userDto.getLastName());
