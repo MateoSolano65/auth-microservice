@@ -1,7 +1,6 @@
 package co.com.pragma.api.utils;
 
-public class regex {
-
+public class Regex {
   public static final String NAME_REGEX = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]{2,50}$";
   public static final String LAST_NAME_REGEX = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]{2,50}$";
   public static final String DATE_REGEX = "^\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01])$";

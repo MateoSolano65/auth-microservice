@@ -25,7 +25,7 @@ public class UserUseCaseTest {
     UserUseCase userUseCase;
 
     @Test
-    void shouldCreateUserSuccessfully() {
+    void shouldCreateSuccessfully() {
         User input = User.builder()
                 .email("test@example.com")
                 .documentNumber("112233")
@@ -36,7 +36,7 @@ public class UserUseCaseTest {
         when(userGateway.existUserByEmailAndDocument("test@example.com", "112233")).thenReturn(Mono.just(false));
         when(userGateway.saveUser(any(User.class))).thenReturn(Mono.just(saved));
 
-        Mono<User> result = userUseCase.createUser(input);
+        Mono<User> result = userUseCase.create(input);
 
         StepVerifier.create(result)
                 .expectNextMatches(u -> u.getId().equals(1L)
@@ -58,7 +58,7 @@ public class UserUseCaseTest {
                 .build();
         when(userGateway.existUserByEmailAndDocument("test@example.com", "112233")).thenReturn(Mono.just(true));
 
-        Mono<User> result = userUseCase.createUser(input);
+        Mono<User> result = userUseCase.create(input);
 
         StepVerifier.create(result)
                 .expectErrorMatches(t -> t instanceof ResourceConflictException

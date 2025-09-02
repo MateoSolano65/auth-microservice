@@ -138,7 +138,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
 
             return responseBuilder
                 .error(ErrorInfoDto.builder()
-                    .code("RESOURCE_CONFLICT")
+                    .code("CY-100")
                     .detail(throwable.getMessage())
                     .build())
                 .build();

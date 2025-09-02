@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static co.com.pragma.api.utils.regex.*;
+import static co.com.pragma.api.utils.Regex.*;
 
 @Data
 @NoArgsConstructor

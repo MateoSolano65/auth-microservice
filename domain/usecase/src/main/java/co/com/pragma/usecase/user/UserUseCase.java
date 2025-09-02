@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 public class UserUseCase {
     private final UserGateway userGateway;
 
-    public Mono<User> createUser(User user) {
+    public Mono<User> create(User user) {
 
         return userGateway.existUserByEmailAndDocument(user.getEmail(), user.getDocumentNumber())
                 .flatMap(exists -> {

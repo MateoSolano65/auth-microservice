@@ -48,7 +48,7 @@ public class UserHandler {
         return serverRequest.bodyToMono(UserDto.class)
                 .flatMap(validatorDTO::validate)
                 .map(userMapper::toUserDomain)
-                .flatMap(userUseCase::createUser)
+                .flatMap(userUseCase::create)
                 .map(userMapper::toUserDto)
                 .flatMap(userDto -> {
                     ResponseApiDto<UserDto> response = ResponseApiDto.<UserDto>builder()

@@ -68,7 +68,7 @@ class UserRouterRestTest {
     void createUserPost_shouldReturn201WithWrappedDto() {
         when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(userDto));
         when(userMapper.toUserDomain(any(UserDto.class))).thenReturn(user);
-        when(userUseCase.createUser(any(User.class))).thenReturn(Mono.just(user));
+        when(userUseCase.create(any(User.class))).thenReturn(Mono.just(user));
         when(userMapper.toUserDto(any(User.class))).thenReturn(userDto);
 
         webTestClient.post()
@@ -102,7 +102,7 @@ class UserRouterRestTest {
     void createUserPost_shouldReturn5xxOnUseCaseError() {
         when(validatorDTO.validate(any(UserDto.class))).thenReturn(Mono.just(userDto));
         when(userMapper.toUserDomain(any(UserDto.class))).thenReturn(user);
-        when(userUseCase.createUser(any(User.class))).thenReturn(Mono.error(new RuntimeException("boom")));
+        when(userUseCase.create(any(User.class))).thenReturn(Mono.error(new RuntimeException("boom")));
 
         webTestClient.post()
                 .uri("/api/users")
