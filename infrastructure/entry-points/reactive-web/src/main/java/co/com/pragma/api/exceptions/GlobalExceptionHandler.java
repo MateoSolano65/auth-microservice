@@ -134,20 +134,18 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                     .build())
                 .meta(meta)
                 .build();
-        } else if (throwable instanceof ResourceConflictException) {
-
+        } else if (throwable instanceof BusinessRuleViolationException businessEx) {
             return responseBuilder
                 .error(ErrorInfoDto.builder()
-                    .code("CY-100")
-                    .detail(throwable.getMessage())
+                    .code(businessEx.code())
+                    .detail(businessEx.getMessage())
                     .build())
                 .build();
-        } else if (throwable instanceof BusinessRuleViolationException) {
-
+        } else if (throwable instanceof ResourceConflictException resourceEx) {
             return responseBuilder
                 .error(ErrorInfoDto.builder()
-                    .code("BUSINESS_RULE_VIOLATION")
-                    .detail(throwable.getMessage())
+                    .code(resourceEx.code())
+                    .detail(resourceEx.getMessage())
                     .build())
                 .build();
         } else {
