@@ -2,6 +2,7 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.dto.ResponseApiDto;
 import co.com.pragma.api.dto.UserDto;
+import co.com.pragma.model.response.ResponseCode;
 import co.com.pragma.api.mapper.UserMapper;
 import co.com.pragma.api.validator.ValidatorDTO;
 import co.com.pragma.usecase.user.UserUseCase;
@@ -51,9 +52,10 @@ public class UserHandler {
                 .flatMap(userUseCase::create)
                 .map(userMapper::toUserDto)
                 .flatMap(userDto -> {
+                    ResponseCode successCode = ResponseCode.USER_CREATED;
                     ResponseApiDto<UserDto> response = ResponseApiDto.<UserDto>builder()
-                            .status(HttpStatus.CREATED.value())
-                            .message(HttpStatus.CREATED.getReasonPhrase())
+                            .code(successCode.getCodeValue())
+                            .message(successCode.getDefaultMessage())
                             .data(userDto)
                             .build();
                     
@@ -76,9 +78,10 @@ public class UserHandler {
         .map(userMapper::toUserDto)
         .collectList()
         .flatMap(userDtos -> {
+            ResponseCode successCode = ResponseCode.USER_FOUND;
             ResponseApiDto<List<UserDto>> response = ResponseApiDto.<List<UserDto>>builder()
-                    .status(HttpStatus.OK.value())
-                    .message(HttpStatus.OK.getReasonPhrase())
+                    .code(successCode.getCodeValue())
+                    .message(successCode.getDefaultMessage())
                     .data(userDtos)
                     .build();
                     
