@@ -23,4 +23,8 @@ public class UserUseCase {
     public Flux<User> getAllUsers() {
         return userGateway.findAll();
     }
+    
+    public Mono<Boolean> validateExistsByEmailAndDocument(String email, String documentNumber) {
+        return userGateway.existUserByEmailAndDocument(email, documentNumber);
+    }
 }

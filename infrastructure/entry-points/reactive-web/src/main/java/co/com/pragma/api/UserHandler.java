@@ -87,4 +87,43 @@ public class UserHandler {
                 .bodyValue(response);
         });
     }
+    
+    @Operation(
+        operationId = "validateUserExistsSwagger",
+        summary = "Validar si existe un usuario por documento y correo",
+        description = "Este endpoint valida si existe un usuario con el correo y documento proporcionados. " +
+                      "Devuelve true si existe, false si no existe.",
+        parameters = {
+            @io.swagger.v3.oas.annotations.Parameter(
+                name = "email",
+                description = "Correo electrónico del usuario a validar",
+                required = true,
+                example = "usuario@ejemplo.com",
+                in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
+            ),
+            @io.swagger.v3.oas.annotations.Parameter(
+                name = "document",
+                description = "Número de documento del usuario a validar",
+                required = true,
+                example = "123456789",
+                in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
+            )
+        },
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "Devuelve true si existe o false si no existe",
+                content = @Content(schema = @Schema(implementation = Boolean.class))
+            )
+        }
+    )
+    public Mono<ServerResponse> validateUserExists(ServerRequest serverRequest) {
+        String email = serverRequest.queryParam("email").orElse("");
+        String documentNumber = serverRequest.queryParam("document").orElse("");
+        
+        return userUseCase.validateExistsByEmailAndDocument(email, documentNumber)
+            .flatMap(exists -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(exists));
+    }
 }
