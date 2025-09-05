@@ -1,12 +1,11 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.dto.ResponseApiDto;
 import co.com.pragma.api.dto.UserDto;
-import co.com.pragma.api.exceptions.ErrorResponse;
 import co.com.pragma.api.mapper.UserMapper;
 import co.com.pragma.api.validator.ValidatorDTO;
 import co.com.pragma.usecase.user.UserUseCase;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,6 +17,7 @@ import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import reactor.core.publisher.Mono;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -35,20 +35,32 @@ public class UserHandler {
           ),
       responses = {
           @ApiResponse(responseCode = "201", description = "Usuario creado",
-              content = @Content(schema = @Schema(implementation = UserDto.class))),
+              content = @Content(schema = @Schema(implementation = ResponseApiDto.class))),
           @ApiResponse(responseCode = "400", description = "Datos inválidos",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+              content = @Content(schema = @Schema(implementation = ResponseApiDto.class))),
+          @ApiResponse(responseCode = "422", description = "Error de validación",
+              content = @Content(schema = @Schema(implementation = ResponseApiDto.class))),
           @ApiResponse(responseCode = "500", description = "Error interno",
-              content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+              content = @Content(schema = @Schema(implementation = ResponseApiDto.class)))
       }
   )
     public Mono<ServerResponse> createUserPost(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(UserDto.class)
                 .flatMap(validatorDTO::validate)
                 .map(userMapper::toUserDomain)
-                .flatMap(userUseCase::createUser)
+                .flatMap(userUseCase::create)
                 .map(userMapper::toUserDto)
-                .flatMap(userDto -> ServerResponse.status(HttpStatus.CREATED).bodyValue(userDto));
+                .flatMap(userDto -> {
+                    ResponseApiDto<UserDto> response = ResponseApiDto.<UserDto>builder()
+                            .status(HttpStatus.CREATED.value())
+                            .message(HttpStatus.CREATED.getReasonPhrase())
+                            .data(userDto)
+                            .build();
+                    
+                    return ServerResponse.status(HttpStatus.CREATED)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(response);
+                });
     }
 
     @Operation(
@@ -56,17 +68,62 @@ public class UserHandler {
         summary = "Listar usuarios",
         responses = @ApiResponse(responseCode = "200",
             description = "OK",
-            content = @Content(array = @ArraySchema(
-                schema = @Schema(implementation = UserDto.class)
-            ))
+            content = @Content(schema = @Schema(implementation = ResponseApiDto.class))
         )
     )
     public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
       return userUseCase.getAllUsers()
         .map(userMapper::toUserDto)
         .collectList()
-        .flatMap(userDtos -> ServerResponse.ok()
-          .contentType(MediaType.APPLICATION_JSON)
-          .bodyValue(userDtos));
+        .flatMap(userDtos -> {
+            ResponseApiDto<List<UserDto>> response = ResponseApiDto.<List<UserDto>>builder()
+                    .status(HttpStatus.OK.value())
+                    .message(HttpStatus.OK.getReasonPhrase())
+                    .data(userDtos)
+                    .build();
+                    
+            return ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(response);
+        });
+    }
+    
+    @Operation(
+        operationId = "validateUserExistsSwagger",
+        summary = "Validar si existe un usuario por documento y correo",
+        description = "Este endpoint valida si existe un usuario con el correo y documento proporcionados. " +
+                      "Devuelve true si existe, false si no existe.",
+        parameters = {
+            @io.swagger.v3.oas.annotations.Parameter(
+                name = "email",
+                description = "Correo electrónico del usuario a validar",
+                required = true,
+                example = "usuario@ejemplo.com",
+                in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
+            ),
+            @io.swagger.v3.oas.annotations.Parameter(
+                name = "document",
+                description = "Número de documento del usuario a validar",
+                required = true,
+                example = "123456789",
+                in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
+            )
+        },
+        responses = {
+            @ApiResponse(
+                responseCode = "200", 
+                description = "Devuelve true si existe o false si no existe",
+                content = @Content(schema = @Schema(implementation = Boolean.class))
+            )
+        }
+    )
+    public Mono<ServerResponse> validateUserExists(ServerRequest serverRequest) {
+        String email = serverRequest.queryParam("email").orElse("");
+        String documentNumber = serverRequest.queryParam("document").orElse("");
+        
+        return userUseCase.validateExistsByEmailAndDocument(email, documentNumber)
+            .flatMap(exists -> ServerResponse.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(exists));
     }
 }

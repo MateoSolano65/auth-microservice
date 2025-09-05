@@ -54,11 +54,18 @@ public class UserRouterRest {
             method = RequestMethod.GET,
             beanClass = UserHandler.class,
             beanMethod = "getAllUsers"
+        ),
+        @RouterOperation(
+            path = "/api/users/validate",
+            method = RequestMethod.GET,
+            beanClass = UserHandler.class,
+            beanMethod = "validateUserExists"
         )
     })
     @Bean
     public RouterFunction<ServerResponse> routerFunction(UserHandler userHandler) {
         return route(POST("/api/users"), userHandler::createUserPost)
-                .andRoute(GET("/api/users"), userHandler::getAllUsers);
+                .andRoute(GET("/api/users"), userHandler::getAllUsers)
+                .andRoute(GET("/api/users/validate"), userHandler::validateUserExists);
     }
 }
