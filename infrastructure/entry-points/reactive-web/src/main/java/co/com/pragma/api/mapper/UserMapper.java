@@ -20,6 +20,7 @@ public class UserMapper {
                 .phoneNumber(dto.getPhoneNumber())
                 .email(dto.getEmail())
                 .documentNumber(dto.getDocumentNumber())
+                .password(dto.getPassword())
                 .role(dto.getRole())
                 .baseSalary(dto.getBaseSalary())
                 .build();
@@ -38,6 +39,7 @@ public class UserMapper {
                 .phoneNumber(entity.getPhoneNumber())
                 .email(entity.getEmail())
                 .documentNumber(entity.getDocumentNumber())
+                .password(entity.getPassword())
                 .role(entity.getRole())
                 .baseSalary(entity.getBaseSalary())
                 .build();

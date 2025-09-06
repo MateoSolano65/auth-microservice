@@ -27,4 +27,8 @@ public class UserUseCase {
     public Mono<Boolean> validateExistsByEmailAndDocument(String email, String documentNumber) {
         return userGateway.existUserByEmailAndDocument(email, documentNumber);
     }
+
+    public Mono<User> existUserByEmail(String email) {
+        return userGateway.existUserByEmail(email);
+    }
 }

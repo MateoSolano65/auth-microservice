@@ -8,4 +8,5 @@ public interface UserGateway {
   Mono<User> saveUser(User user);
   Mono<Boolean> existUserByEmailAndDocument(String email, String documentNumber);
   Flux<User> findAll();
+  Mono<User> existUserByEmail(String email);
 }

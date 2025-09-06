@@ -54,6 +54,10 @@ public class UserDto {
     @Schema(description = "Número de documento de identidad", example = "1234567890")
     @NotBlank(message = "El número de documento es obligatorio")
     private String documentNumber;
+
+    @Schema(description = "Contraseña del usuario", example = "PasswordExample")
+    @NotBlank(message = "La contraseña es obligatoria")
+    private String password;
     
     @Schema(description = "Identificador del rol", example = "USER")
     @NotBlank(message = "El rol es obligatorio")

@@ -29,6 +29,8 @@ public class UserData {
   private String email;
   @Column("document_number")
   private String documentNumber;
+  @Column("password")
+  private String password;
   @Column("role")
   private String role;
   @Column("base_salary")

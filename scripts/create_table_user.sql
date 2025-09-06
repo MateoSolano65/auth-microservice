@@ -9,6 +9,7 @@ CREATE TABLE users (
 	phone_number varchar(50) NULL,
 	email varchar(50) NOT NULL,
 	document_number varchar(50) NOT NULL,
+	password varchar(255) NOT NULL,
 	role varchar(50) NOT NULL,
 	base_salary varchar(255) not null,
 	constraint usuario_pk primary key (id)
