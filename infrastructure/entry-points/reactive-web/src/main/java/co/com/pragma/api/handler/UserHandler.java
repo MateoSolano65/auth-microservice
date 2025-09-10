@@ -1,7 +1,8 @@
-package co.com.pragma.api;
+package co.com.pragma.api.handler;
 
 import co.com.pragma.api.dto.ResponseApiDto;
 import co.com.pragma.api.dto.UserDto;
+import co.com.pragma.api.dto.UserResponseDto;
 import co.com.pragma.model.response.ResponseCode;
 import co.com.pragma.api.mapper.UserMapper;
 import co.com.pragma.api.validator.ValidatorDTO;
@@ -50,13 +51,13 @@ public class UserHandler {
                 .flatMap(validatorDTO::validate)
                 .map(userMapper::toUserDomain)
                 .flatMap(userUseCase::create)
-                .map(userMapper::toUserDto)
-                .flatMap(userDto -> {
+                .map(userMapper::toUserResponseDto)
+                .flatMap(userResponse -> {
                     ResponseCode successCode = ResponseCode.USER_CREATED;
-                    ResponseApiDto<UserDto> response = ResponseApiDto.<UserDto>builder()
+                    ResponseApiDto<UserResponseDto> response = ResponseApiDto.<UserResponseDto>builder()
                             .code(successCode.getCodeValue())
                             .message(successCode.getDefaultMessage())
-                            .data(userDto)
+                            .data(userResponse)
                             .build();
                     
                     return ServerResponse.status(HttpStatus.CREATED)
@@ -75,19 +76,30 @@ public class UserHandler {
     )
     public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
       return userUseCase.getAllUsers()
-        .map(userMapper::toUserDto)
+        .map(userMapper::toUserResponseDto)
         .collectList()
-        .flatMap(userDtos -> {
+        .flatMap(userResponses -> {
             ResponseCode successCode = ResponseCode.USER_FOUND;
-            ResponseApiDto<List<UserDto>> response = ResponseApiDto.<List<UserDto>>builder()
+            ResponseApiDto<List<UserResponseDto>> response = ResponseApiDto.<List<UserResponseDto>>builder()
                     .code(successCode.getCodeValue())
                     .message(successCode.getDefaultMessage())
-                    .data(userDtos)
+                    .data(userResponses)
                     .build();
-                    
+            
             return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(response);
+        })
+        .onErrorResume(e -> {
+            ResponseApiDto<String> errorResponse = ResponseApiDto.<String>builder()
+                    .code(ResponseCode.INTERNAL_SERVER_ERROR.getCodeValue())
+                    .message("Error al obtener usuarios")
+                    .error(List.of(e.getMessage()))
+                    .build();
+            
+            return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(errorResponse);
         });
     }
     

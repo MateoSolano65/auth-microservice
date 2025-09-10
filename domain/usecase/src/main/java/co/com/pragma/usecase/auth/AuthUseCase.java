@@ -2,8 +2,9 @@ package co.com.pragma.usecase.auth;
 
 import co.com.pragma.model.auth.Auth;
 import co.com.pragma.model.auth.gateways.AuthProviderGateway;
-import co.com.pragma.model.exception.BusinessRuleViolationException;
-import co.com.pragma.model.exception.ResourceConflictException;
+import co.com.pragma.model.auth.gateways.PasswordEncoderGateway;
+import co.com.pragma.model.exception.AuthenticationException;
+import co.com.pragma.model.user.User;
 import co.com.pragma.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -12,12 +13,27 @@ import reactor.core.publisher.Mono;
 public class AuthUseCase {
     private final UserUseCase userUseCase;
     private final AuthProviderGateway authProviderGateway;
+    private final PasswordEncoderGateway passwordEncoder;
 
-//    public Mono<Auth> signin(String email, String password){
-//        userUseCase.existUserByEmail(email)
-//                .switchIfEmpty(Mono.error(new ResourceConflictException("User already exists")))
-//                .flatMap(user -> {
-//
-//                });
-//    }
+    public Mono<Auth> signIn(String email, String password) {
+        return userUseCase.existUserByEmail(email)
+                .switchIfEmpty(Mono.error(new AuthenticationException("credenciales invalidas")))
+                .flatMap(user ->
+                        passwordEncoder.matches(password, user.getPassword())
+                                .flatMap(match -> {
+                                    if (!match.equals(Boolean.TRUE)){
+                                        return Mono.error(new AuthenticationException("credenciales invalidas"));
+                                    }
+                                    return authProviderGateway.authenticate(user);
+                                })
+                );
+    }
+
+    public Mono<User> validateToken(String token) {
+        return authProviderGateway.validateToken(token)
+                .flatMap(isValid -> {
+                    return authProviderGateway.getSubject(token)
+                            .flatMap(userUseCase::existUserByEmail);
+                });
+    }
 }
