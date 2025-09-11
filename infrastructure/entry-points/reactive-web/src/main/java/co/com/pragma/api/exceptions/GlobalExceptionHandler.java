@@ -16,6 +16,7 @@ import org.springframework.http.codec.ServerCodecConfigurer;
 import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.server.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.access.AccessDeniedException;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -74,6 +75,14 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
                             .error(errors)
                             .build());
         }
+
+        if (ex instanceof AccessDeniedException) {
+          return buildResponse(HttpStatus.FORBIDDEN,
+                  ResponseApiDto.builder()
+                          .code(ResponseCode.FORBIDDEN.getCodeValue())
+                          .message(ResponseCode.FORBIDDEN.getDefaultMessage())
+                          .build());
+      }
 
         HttpStatus status = (ex instanceof ResponseStatusException rse)
                 ? HttpStatus.valueOf(rse.getStatusCode().value())

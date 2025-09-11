@@ -17,8 +17,7 @@ public class UserUseCase {
         return userGateway.existUserByEmailAndDocument(user.getEmail(), user.getDocumentNumber())
                 .flatMap(exists -> {
                     if (Boolean.TRUE.equals(exists)) return Mono.error(new ResourceConflictException("User already exists"));
-                    
-                    // Encriptar contraseña antes de guardar
+
                     return passwordEncoder.encode(user.getPassword())
                             .flatMap(encodedPassword -> {
                                 User userWithEncodedPassword = user.toBuilder()

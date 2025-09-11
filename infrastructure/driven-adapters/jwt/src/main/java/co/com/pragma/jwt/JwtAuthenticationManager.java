@@ -22,11 +22,10 @@ public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
-        return Mono.justOrEmpty(authentication)
-                .map(auth -> auth.getCredentials().toString())
-                .flatMap(token -> Mono.fromCallable(() -> jwtProvider.getClaims(token))
-                        .onErrorMap(e -> new BadCredentialsException(ResponseCode.UNAUTHORIZED.getDefaultMessage(), e))
-                )
+        return Mono.just(authentication)
+                .map(auth -> jwtProvider.getClaims(auth.getCredentials().toString()))
+                .log()
+                .onErrorMap(e -> new BadCredentialsException(ResponseCode.UNAUTHORIZED.getDefaultMessage(), e))
                 .map(claims -> {
                     String role = (String) claims.get("role");
                     return new UsernamePasswordAuthenticationToken(

@@ -9,8 +9,8 @@ public class PublicRoutes {
             "/webjars/swagger-ui/**",
             "/api/v1/login",
             "/api/v1/token",
-            "/v3/api-docs/swagger-config",
-            "/api/v1/users/email/*/exists"
+            "/v3/api-docs/swagger-config"
+//            ,"/api/users/validate"
 //             ,"/api/users"
     };
     

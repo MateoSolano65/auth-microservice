@@ -53,21 +53,6 @@ public class JwtProvider implements AuthProviderGateway {
                 .getPayload();
     }
 
-    public Mono<Boolean> validate(String token) {
-        return Mono.fromCallable(() -> {
-            Jwts.parser()
-                    .verifyWith(getKey(secret))
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
-                    .getSubject();
-            return true;
-        }).onErrorResume(e -> {
-            log.error("Token validation failed: {}", e.getMessage());
-            return Mono.just(false);
-        });
-    }
-
     @Override
     public Mono<Boolean> validateToken(String token) {
         return Mono.fromSupplier(() -> {
