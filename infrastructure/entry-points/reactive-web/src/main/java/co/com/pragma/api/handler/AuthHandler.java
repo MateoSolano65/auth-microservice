@@ -31,36 +31,31 @@ public class AuthHandler {
     private final ValidationTokenMapper validationTokenMapper;
 
 
-    @RouterOperation(
-            path = "/api/v1/login",
-            method = RequestMethod.POST,
-            beanClass = AuthHandler.class,
-            beanMethod = "listenSignIn",
-            operation = @Operation(
-                    operationId = "login",
-                    summary = "User login",
-                    description = "Authenticates a user and returns an authentication token",
-                    requestBody = @RequestBody(
-                            required = true,
-                            description = "The user's credentials (email and password)",
-                            content = @Content(schema = @Schema(implementation = SignInDTO.class))
+    @Operation(
+            operationId = "login",
+            summary = "User login",
+            description = "Authenticates a user and returns an authentication token",
+            requestBody = @RequestBody(
+                    required = true,
+                    description = "The user's credentials (email and password)",
+                    content = @Content(schema = @Schema(implementation = SignInDTO.class))
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Login successful"
                     ),
-                    responses = {
-                            @ApiResponse(
-                                    responseCode = "200",
-                                    description = "Login successful"
-                            ),
-                            @ApiResponse(
-                                    responseCode = "401",
-                                    description = "Unauthorized - Invalid credentials"
-                            ),
-                            @ApiResponse(
-                                    responseCode = "400",
-                                    description = "Bad Request - Missing or invalid fields"
-                            )
-                    }
-            )
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized - Invalid credentials"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Missing or invalid fields"
+                    )
+            }
     )
+
 
     public Mono<ServerResponse> listenSignIn(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(SignInDTO.class)
@@ -71,43 +66,38 @@ public class AuthHandler {
                                     .message(ResponseCode.USER_AUTHENTICATED.getDefaultMessage())
                                     .data(auth)
                                     .build();
-                                    
+
                             return ServerResponse.ok()
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .bodyValue(response);
                         }));
     }
 
-    @RouterOperation(
-            path = "/api/v1/token",
-            method = RequestMethod.POST,
-            beanClass = AuthHandler.class,
-            beanMethod = "validateToken",
-            operation = @Operation(
-                    operationId = "isValid",
-                    summary = "String token",
-                    description = "Validate an authentication token",
-                    requestBody = @RequestBody(
-                            required = true,
-                            description = "token",
-                            content = @Content(schema = @Schema(implementation = ValidateTokenDTO.class))
+    @Operation(
+            operationId = "isValid",
+            summary = "String token",
+            description = "Validate an authentication token",
+            requestBody = @RequestBody(
+                    required = true,
+                    description = "token",
+                    content = @Content(schema = @Schema(implementation = ValidateTokenDTO.class))
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "is valid successful"
                     ),
-                    responses = {
-                            @ApiResponse(
-                                    responseCode = "200",
-                                    description = "is valid successful"
-                            ),
-                            @ApiResponse(
-                                    responseCode = "401",
-                                    description = "Unauthorized - Invalid token"
-                            ),
-                            @ApiResponse(
-                                    responseCode = "400",
-                                    description = "Bad Request - Missing or invalid fields"
-                            )
-                    }
-            )
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized - Invalid token"
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Bad Request - Missing or invalid fields"
+                    )
+            }
     )
+
     public Mono<ServerResponse> validateToken(ServerRequest serverRequest) {
         return serverRequest.bodyToMono(ValidateTokenDTO.class)
                 .flatMap(tokenDTO -> authUseCase.validateToken(tokenDTO.token()))
@@ -118,7 +108,7 @@ public class AuthHandler {
                             .message(ResponseCode.TOKEN_GENERATED.getDefaultMessage())
                             .data(user)
                             .build();
-                    
+
                     return ServerResponse.ok()
                             .contentType(MediaType.APPLICATION_JSON)
                             .bodyValue(response);

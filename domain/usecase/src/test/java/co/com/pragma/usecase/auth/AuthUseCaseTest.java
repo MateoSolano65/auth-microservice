@@ -78,7 +78,7 @@ class AuthUseCaseTest {
         StepVerifier.create(result)
                 .expectErrorMatches(throwable -> 
                     throwable instanceof AuthenticationException && 
-                    "credenciales invalidas".equals(throwable.getMessage()))
+                    "invalid credentials".equals(throwable.getMessage()))
                 .verify();
                 
         verify(userUseCase).existUserByEmail(email);
@@ -107,7 +107,7 @@ class AuthUseCaseTest {
         StepVerifier.create(result)
                 .expectErrorMatches(throwable -> 
                     throwable instanceof AuthenticationException && 
-                    "credenciales invalidas".equals(throwable.getMessage()))
+                    "invalid credentials".equals(throwable.getMessage()))
                 .verify();
                 
         verify(userUseCase).existUserByEmail(email);

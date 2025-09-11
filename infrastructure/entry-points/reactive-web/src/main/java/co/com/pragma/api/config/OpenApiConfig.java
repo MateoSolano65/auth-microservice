@@ -10,9 +10,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
         info = @Info(
-                title = "API de Usuarios",
+                title = "API for Auth",
                 version = "1.0",
-                description = "API para la gestión de usuarios del sistema",
+                description = "API for Auth",
                 contact = @Contact(
                         name = "CrediYa",
                         email = "soporte@crediya.com.co"
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
         servers = {
                 @Server(
                         url = "/",
-                        description = "Servidor de desarrollo"
+                        description = "Development server"
                 )
         }
 )

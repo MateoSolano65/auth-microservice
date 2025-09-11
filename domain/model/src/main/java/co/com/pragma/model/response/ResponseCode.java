@@ -9,18 +9,18 @@ import java.util.Map;
 public enum ResponseCode {
     
     // Success codes
-    USER_CREATED("AU200", "Usuario creado exitosamente"),
-    USER_AUTHENTICATED("AU201", "Usuario autenticado exitosamente"),
-    TOKEN_GENERATED("AU202", "Token generado exitosamente"),
-    USER_FOUND("AU203", "Usuario encontrado exitosamente"),
+    USER_CREATED("AU200", "User created successfully"),
+    USER_AUTHENTICATED("AU201", "User authenticated successfully"),
+    TOKEN_GENERATED("AU202", "Token generated successfully"),
+    USER_FOUND("AU203", "User found successfully"),
     
     // Error codes
-    VALIDATION_ERROR("VAL-001", "Error de validación"),
-    INTERNAL_SERVER_ERROR("API-500", "Error interno del servidor"),
-    BAD_REQUEST("API-400", "Solicitud incorrecta"),
-    CONFLICT("API-409", "Conflicto con el recurso"),
-    UNAUTHORIZED("API-401", "No autorizado"),
-    FORBIDDEN("API-403", "Acceso prohibido");
+    VALIDATION_ERROR("VAL-001", "Validation error"),
+    INTERNAL_SERVER_ERROR("API-500", "Internal server error"),
+    BAD_REQUEST("API-400", "Bad request"),
+    CONFLICT("API-409", "Resource conflict"),
+    UNAUTHORIZED("API-401", "Unauthorized"),
+    FORBIDDEN("API-403", "Forbidden");
     
     private final String codeValue;
     private final String defaultMessage;

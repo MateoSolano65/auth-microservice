@@ -30,19 +30,19 @@ public class UserHandler {
 
     @Operation(
       operationId = "createUserSwagger",
-      summary = "Crear un nuevo usuario",
+      summary = "Create a new user",
       requestBody = @io.swagger.v3.oas.annotations.parameters.
           RequestBody(required = true,
               content = @Content(schema = @Schema(implementation = UserDto.class))
           ),
       responses = {
-          @ApiResponse(responseCode = "201", description = "Usuario creado",
+          @ApiResponse(responseCode = "201", description = "User created",
               content = @Content(schema = @Schema(implementation = ResponseApiDto.class))),
-          @ApiResponse(responseCode = "400", description = "Datos inválidos",
+          @ApiResponse(responseCode = "400", description = "Invalid data",
               content = @Content(schema = @Schema(implementation = ResponseApiDto.class))),
-          @ApiResponse(responseCode = "422", description = "Error de validación",
+          @ApiResponse(responseCode = "422", description = "Validation error",
               content = @Content(schema = @Schema(implementation = ResponseApiDto.class))),
-          @ApiResponse(responseCode = "500", description = "Error interno",
+          @ApiResponse(responseCode = "500", description = "Internal error",
               content = @Content(schema = @Schema(implementation = ResponseApiDto.class)))
       }
   )
@@ -68,7 +68,7 @@ public class UserHandler {
 
     @Operation(
         operationId = "getAllUsersSwagger",
-        summary = "Listar usuarios",
+        summary = "List users",
         responses = @ApiResponse(responseCode = "200",
             description = "OK",
             content = @Content(schema = @Schema(implementation = ResponseApiDto.class))
@@ -93,7 +93,7 @@ public class UserHandler {
         .onErrorResume(e -> {
             ResponseApiDto<String> errorResponse = ResponseApiDto.<String>builder()
                     .code(ResponseCode.INTERNAL_SERVER_ERROR.getCodeValue())
-                    .message("Error al obtener usuarios")
+                    .message("Error getting users")
                     .error(List.of(e.getMessage()))
                     .build();
             
@@ -105,20 +105,20 @@ public class UserHandler {
     
     @Operation(
         operationId = "validateUserExistsSwagger",
-        summary = "Validar si existe un usuario por documento y correo",
-        description = "Este endpoint valida si existe un usuario con el correo y documento proporcionados. " +
-                      "Devuelve true si existe, false si no existe.",
+        summary = "Validate if a user exists by document and email",
+        description = "This endpoint validates if a user exists with the provided email and document. " +
+                      "Returns true if it exists or false if it does not exist.",
         parameters = {
             @io.swagger.v3.oas.annotations.Parameter(
                 name = "email",
-                description = "Correo electrónico del usuario a validar",
+                description = "Email of the user to validate",
                 required = true,
-                example = "usuario@ejemplo.com",
+                example = "user@example.com",
                 in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
             ),
             @io.swagger.v3.oas.annotations.Parameter(
                 name = "document",
-                description = "Número de documento del usuario a validar",
+                description = "Document number of the user to validate",
                 required = true,
                 example = "123456789",
                 in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
@@ -127,7 +127,7 @@ public class UserHandler {
         responses = {
             @ApiResponse(
                 responseCode = "200", 
-                description = "Devuelve true si existe o false si no existe",
+                description = "Returns true if it exists or false if it does not exist",
                 content = @Content(schema = @Schema(implementation = Boolean.class))
             )
         }

@@ -17,12 +17,12 @@ public class AuthUseCase {
 
     public Mono<Auth> signIn(String email, String password) {
         return userUseCase.existUserByEmail(email)
-                .switchIfEmpty(Mono.error(new AuthenticationException("credenciales invalidas")))
+                .switchIfEmpty(Mono.error(new AuthenticationException("invalid credentials")))
                 .flatMap(user ->
                         passwordEncoder.matches(password, user.getPassword())
                                 .flatMap(match -> {
                                     if (!match.equals(Boolean.TRUE)){
-                                        return Mono.error(new AuthenticationException("credenciales invalidas"));
+                                        return Mono.error(new AuthenticationException("invalid credentials"));
                                     }
                                     return authProviderGateway.authenticate(user);
                                 })
