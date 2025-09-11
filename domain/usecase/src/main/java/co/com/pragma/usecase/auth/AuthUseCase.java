@@ -32,8 +32,11 @@ public class AuthUseCase {
     public Mono<User> validateToken(String token) {
         return authProviderGateway.validateToken(token)
                 .flatMap(isValid -> {
-                    return authProviderGateway.getSubject(token)
-                            .flatMap(userUseCase::existUserByEmail);
+                    if (Boolean.TRUE.equals(isValid)) {
+                        return authProviderGateway.getSubject(token)
+                                .flatMap(userUseCase::existUserByEmail);
+                    }
+                    return Mono.empty();
                 });
     }
 }
